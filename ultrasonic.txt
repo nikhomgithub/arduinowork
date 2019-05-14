@@ -1,0 +1,84 @@
+
+
+/*
+//US-016 ultrasonic sensor analog voltage output dual-range
+//https://www.arduinoshop99.com/product/904/us-016-ultrasonic-sensor-analog-voltage-output-dual-range?gclid=Cj0KCQjwzunmBRDsARIsAGrt4muCvPJI4r3tWaEa96-g9YynBItcWwRUC6zQ_mEzfHYNiarabP5nszUaAuTrEALw_wcB
+
+#define rangePin 2   //define pin
+#define outPin A0          
+unsigned int ADCValue;  //initialize variable
+ 
+void setup() {
+  //set baud rate for communicating with the computer
+  Serial.begin(9600);
+  pinMode(rangePin, OUTPUT);  //set Pin 2 as output 
+  //set Pin 2 low: range = 1m or set Pin 2 high: range = 3m
+  digitalWrite(rangePin, LOW);  
+                                
+}
+ 
+void loop() {
+    ADCValue = analogRead(outPin);    //read the pin analog value
+    //ADCValue *= 3;      //for range = 3m
+    //show the distance
+    Serial.print ( "Present Length is:");
+    Serial.print (ADCValue, DEC);
+    Serial.println ( "mm");
+ 
+    delay (500); // delay 0.5S
+}
+*/
+/*  
+    Arduino with Test Ultrasonic
+    For complete project details, visit:Arduinoshop99 
+ * 
+ * Complete Guide for Ultrasonic Sensor HY-SRF05 
+ *
+    Ultrasonic sensor Pins:
+        VCC: +5VDC
+        Trig : Trigger (INPUT) - Pin13
+        Echo: Echo (OUTPUT) - Pin 12
+        GND: GND
+ */
+
+//HY-SRF05 Ultrasonic module
+//https://www.arduinoshop99.com/product/210/hy-srf05-ultrasonic-module?gclid=Cj0KCQjwzunmBRDsARIsAGrt4msBu_RX5xKt8L1lfAII150sHUdW3J5vC7BszLXIj1ESjCNsIbL5-HQaAoxNEALw_wcB
+float TRIG_PIN = 13;
+float ECHO_PIN = 12;
+ 
+void setup() {
+  // initialize serial communication:
+  Serial.begin(9600);
+ 
+  pinMode(TRIG_PIN,OUTPUT);
+  pinMode(ECHO_PIN,INPUT);
+}
+ 
+void loop()
+{
+   float duration, distanceCm, distanceIn;
+ 
+  // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+  duration = pulseIn(ECHO_PIN,HIGH);
+ 
+  // convert the time into a distance
+  distanceCm = duration / 29.1 / 2 ;
+  distanceIn = duration / 74 / 2;
+ 
+  if (distanceCm <= 0){
+    Serial.println("Out of range");
+  }
+  else {
+    Serial.print(distanceIn);
+    Serial.print("in, ");
+    Serial.print(distanceCm);
+    Serial.print("cm");
+    Serial.println();
+  }
+  delay(1000);
+}
