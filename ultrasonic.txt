@@ -28,57 +28,26 @@ void loop() {
     delay (500); // delay 0.5S
 }
 */
-/*  
-    Arduino with Test Ultrasonic
-    For complete project details, visit:Arduinoshop99 
- * 
- * Complete Guide for Ultrasonic Sensor HY-SRF05 
- *
-    Ultrasonic sensor Pins:
-        VCC: +5VDC
-        Trig : Trigger (INPUT) - Pin13
-        Echo: Echo (OUTPUT) - Pin 12
-        GND: GND
- */
+ชชชชชชชชชชชชชชชชชชชชชชชชชชชชชชชชช
+HY-SRF05 Ultrasonic Sensor Module Ultrasonic Module HY-SRF05 Distance Measuring Transducer Sensor
 
-//HY-SRF05 Ultrasonic module
-//https://www.arduinoshop99.com/product/210/hy-srf05-ultrasonic-module?gclid=Cj0KCQjwzunmBRDsARIsAGrt4msBu_RX5xKt8L1lfAII150sHUdW3J5vC7BszLXIj1ESjCNsIbL5-HQaAoxNEALw_wcB
-float TRIG_PIN = 13;
-float ECHO_PIN = 12;
- 
-void setup() {
-  // initialize serial communication:
-  Serial.begin(9600);
- 
-  pinMode(TRIG_PIN,OUTPUT);
-  pinMode(ECHO_PIN,INPUT);
+#define ECHOPIN 2 // Pin to receive echo pulse
+#define TRIGPIN 3 // Pin to send trigger pulse
+void setup(){
+Serial.begin(9600); //
+pinMode(ECHOPIN, INPUT);
+pinMode(TRIGPIN, OUTPUT);
 }
- 
-void loop()
-{
-   float duration, distanceCm, distanceIn;
- 
-  // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
-  digitalWrite(TRIG_PIN, LOW);
-  delayMicroseconds(2);
-  digitalWrite(TRIG_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, LOW);
-  duration = pulseIn(ECHO_PIN,HIGH);
- 
-  // convert the time into a distance
-  distanceCm = duration / 29.1 / 2 ;
-  distanceIn = duration / 74 / 2;
- 
-  if (distanceCm <= 0){
-    Serial.println("Out of range");
-  }
-  else {
-    Serial.print(distanceIn);
-    Serial.print("in, ");
-    Serial.print(distanceCm);
-    Serial.print("cm");
-    Serial.println();
-  }
-  delay(1000);
+void loop(){
+digitalWrite(TRIGPIN, LOW); // Set the trigger pin to low for 2uS
+delayMicroseconds(2);
+digitalWrite(TRIGPIN, HIGH); // Send a 10uS high to trigger ranging
+delayMicroseconds(10);
+digitalWrite(TRIGPIN, LOW); // Send pin low again
+int distance = pulseIn(ECHOPIN, HIGH); // Read in times pulse
+distance= distance/58; // Calculate distance from time of pulse
+Serial.println(distance);
+delay(200); // Wait 50mS before next ranging
 }
+
+
