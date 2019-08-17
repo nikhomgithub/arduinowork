@@ -1,0 +1,58 @@
+ATMEGA328 chip for Arduino Uno
+http://www.electronoobs.com/eng_arduino_tut12.php
+
+There are many regist in chip give example of 3 below
+pin 4 = PD2 = Digital I/O 2
+
+
+PD2 value in each register
+DDRD register (setMode: input=0/ouput=1 )  {PD2:bit2, initial value:0)    
+PORTD register (digitWrite : HIGH=1/LOW=0) {PD2:bit2, initial value:0)
+
+LOOGIC OPERATOR of 8 bit Register
+
+  DDRD |= B00000100  mean OR to set PD2 as output (1)
+  PORTTD |= B00000100  mean OR to set PD2 as HIGH (1)
+  PORTTD &= B11111011  mean AND to set PD2 as LOW (0)
+
+We have to 2 ways to control Arduino Pin
+
+Normal Way
+=========
+void setup() {
+  pinMode(2, OUTPUT);
+}
+void loop() {
+  digitalWrite(2,HIGH);
+  digitalWrite(2,LOW);
+  delay(100);
+}
+result 3.41 micro-seconde delay , but beautiful square shape
+
+
+or 
+Register Control
+================
+void setup() {
+  DDRD |= B00000100; //Set the D2 as OUTPUT
+}
+void loop() {
+  PORTD |= B00000100; // Pin D2 to HIGH
+  PORTD &= B11111011; // Pin D2 to LOW
+  delay(100);
+}
+
+0.13 micro-second delay, but not beautiful square shape
+
+=======================================
+=======================================
+clock = 16 Mhz
+
+build-in Timer in Uno
+Timer0, Timer2 (8bit timer) 
+Timer1 (16bit timer)
+
+
+
+
+
