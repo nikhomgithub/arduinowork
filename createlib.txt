@@ -1,8 +1,16 @@
+Morse
+    Morse.h
+    Morse.cpp
+
 To make library we need to file
 1. hearder file    .h
     -list of all functions and variables   
 2. source file     .cpp
     -actual code 
+-------------------------------------
+-------------------------------------
+Header file    .h
+-------------------------------------
 -------------------------------------
 
 /*
@@ -14,25 +22,89 @@ To make library we need to file
 #ifndef Morse_h
 #define Morse_h
 
-#include "Arduino.h"
+#include "Arduino.h"  //access to the standard types and constants of the Arduino language
 
 class Morse
 {
-  public:
-    Morse(int pin);
+  public:            // meaning that they can be accessed by people using your library,
+    Morse(int pin);  // Constructor has the same name as the class, no return type
     void dot();
     void dash();
-  private:
+  private:           //meaning they can only be accessed from within the class itself
     int _pin;
 };
 
 #endif
+-------------------------------------
+-------------------------------------
+Source file  .cpp
+-------------------------------------
+-------------------------------------
 
----------------------------------------
+/*
+  Morse.cpp - Library for flashing Morse code.
+  Created by David A. Mellis, November 2, 2007.
+  Released into the public domain.
+*/
 
-constructor :  used to create an instance of the class. 
-               has the same name as the class, 
-               no return type
-public : meaning that they can be accessed by people using your library,
-private: meaning they can only be accessed from within the class itself
-#include "Arduino.h" : access to the standard types and constants of the Arduino language 
+#include "Arduino.h"             // access to the standard Arduino function
+#include "Morse.h"               // access to the definitions in your header file
+
+Morse::Morse(int pin)            // this happen when someone creates an instance of your class 
+{                                // "Morse::"  mean is part of the Morse class
+  pinMode(pin, OUTPUT);
+  _pin = pin;                    // "_"  mean variables are private
+}
+
+void Morse::dot()
+{
+  digitalWrite(_pin, HIGH);
+  delay(250);
+  digitalWrite(_pin, LOW);
+  delay(250);  
+}
+
+void Morse::dash()
+{
+  digitalWrite(_pin, HIGH);
+  delay(1000);
+  digitalWrite(_pin, LOW);
+  delay(250);
+}
+-------------------------------------
+-------------------------------------
+How to use library ("Morse") 
+
+Arduino 
+   libraries
+     Morse                 //put it like this 
+       Morse.h
+      Morse.cpp
+--------------------------------------
+--------------------------------------
+#include <Morse.h>
+
+Morse morse(13);           //instantiate
+Morse morse2(12);          //instantiate
+void setup()
+{
+}
+
+void loop()
+{
+  morse.dot(); morse.dot(); morse.dot();
+  morse2.dot(); morse2.dot(); morse2.dot();
+  delay(3000);
+}
+
+
+
+
+
+
+
+
+
+
+
+
