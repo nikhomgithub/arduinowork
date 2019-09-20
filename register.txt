@@ -1,0 +1,33 @@
+Macro   //to define address as name such as 0x0A(0x2A) = DDRD 
+
+DDRD => for 0=input or 1=output
+PORT => for input (1=pull-up)  or output (1=HIGH, 0=LOW) => to on and off output
+PIND => for input (1= enable digitalRead value)  
+  
+  pinMode(5,OUTPUT)
+  ditialWrite(5,HIGH)
+  pinMode(2,INPUT_PULLUP)
+  
+  DDRD  = B00100000 = 32 (decimal) 
+  PORTD = B00000100 
+  
+Set/Clear individual register
+
+Set bit
+0010 0000  <-  ( 1<<5 )  //what we want start from 0000 0000    or   _BV(5)  reduce size
+0000 0100  <-  PORTD current status
+---------
+0010 0100  <-  PORTD = ( 1<<5 ) | PORTD   //or bitwise  or  PORTD = _BV(5) | PORTD
+
+Clear bit
+1101 1111  <-  ~( 1<<5 )   or  ~_BV(5)
+0010 0100  <-  PORTD current status
+---------
+0000 0100  <- PORTD = ~( 1<<5 ) & PORTD   //and bitwise   PORTD = ~_BV(5) & PORTD 
+
+0000 0010  <-  ( 1<<2 )
+xxxx xxxx  <-  whatever it read     
+0000 00x0  <-  x >> 2
+               and with mask x , if x=1 (read high)  if x =0 read low   
+               x >> 2  value right shift = return  
+               int result = (PIND & ( 1<<2 )) >> 2
