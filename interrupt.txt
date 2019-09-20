@@ -1,0 +1,88 @@
+//Pins
+const uint8_t btn_pin = 2;
+const uint8_t led_pin = 5;
+
+//Globals
+uint8_t led_state = LOW;
+unit8_t btn_prev = HIGH;
+
+void setup(){
+  pinMode(btn_pin, INPUT_PULLUP);
+  pinMode(led_pin, OUTPUT);
+  
+  attachInterrupt(digitalPinToInterrupt(btn_pin), toggle, FALLING);
+}
+
+void loop(){
+ //Poll for button push
+ uint8_t btn_state = digitalRead(btn_pin);
+ if( (btn_state == LOW) && (btn_prev == HIGH) ){
+  led_state = !led_state;
+  digitWrite(led_pin, led_state);
+ }
+ btn_prev = btn_state;
+ 
+ delay(500)
+
+}
+==============================
+or with interrrupt 
+
+//Pins
+const uint8_t btn_pin = 2;
+const uint8_t led_pin = 5;
+
+//Globals
+uint8_t led_state = LOW;
+
+void setup(){
+  pinMode(btn_pin, INPUT_PULLUP);
+  pinMode(led_pin, OUTPUT);
+ 
+  attachInterrupt(digitalPinToInterrupt(btn_pin), toggle, FALLING);
+}
+
+void loop(){
+ delay(500)
+}
+
+
+void toggle(){
+  led_state = !led_state;
+  digitWrite(led_pin, led_state);
+}
+
+=============================
+or need to complete loop before interupt
+
+//Pins
+const uint8_t btn_pin = 2;
+const uint8_t led_pin = 5;
+
+//Globals
+uint8_t led_state = LOW;
+volatile unit8_t flag=0;  //not to optimize code in loop()
+
+void setup(){
+  pinMode(btn_pin, INPUT_PULLUP);
+  pinMode(led_pin, OUTPUT);
+ 
+  attachInterrupt(digitalPinToInterrupt(btn_pin), toggle, FALLING);
+}
+
+void loop(){
+  
+  if(flag){
+    delay(500)
+    flag=0;
+  }
+}
+
+
+void toggle(){
+  flag=1;
+  led_state = !led_state;
+  digitWrite(led_pin, led_state);
+}
+
+
