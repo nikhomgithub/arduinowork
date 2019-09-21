@@ -77,6 +77,10 @@ void setup(){
   //Reset Timerl Control RegA
   TCCR1A = 0;
   
+  //Set CTC mode (clear counter to 0 after compare)
+  TCCR1B &= ~( 1<< WGM13 )
+  TCCR1B |= ( 1<<WGM12 ) 
+  
   //Set to prescaler of 256
   //CS12   CS11   CS10                                                     Period            cycle for 1 second
   // 1      0      0     clk/256                               256/16 MHz = 16000 ns              62,500
@@ -103,7 +107,7 @@ void lood(){
 }
 
 ISR(TIMER1_COMPA_vect){
-   TCNT1 = tl_load;
+   // TCNT1 = tl_load;  no need this line because we have line 80 //Set CTC mode (clear counter to 0 after compare)
    PORTB ^= ( 1<<led_pin )
 }
 
