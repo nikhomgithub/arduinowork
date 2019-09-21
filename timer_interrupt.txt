@@ -1,0 +1,18 @@
+System clock 16 MHz in Arduino UNO
+
+Prescaler = 8  mean  2 MHz as default of timer 
+                          
+TIMER    Size    count     create Interrupt   ability          Timer in function
+  0      8 bit   0-255          yes           Compare Match    delay(), millis(), micros()
+                                              Overflow         analogWrite() pins 5,6
+  
+  1     16 bit   0-65,535       yes           Compare Match    Servo function
+                                              Overflow         analogWrite() pin 9, 10
+                                              Input Capture
+  
+  2      8 bit   0-255          yes           Compare Match    tone()
+                                              Overflow         analogWrite() pin 3,11
+
+Compare Match   = timer count to a certain value, can activate Interrupt (IRP) function
+Overflow        = be able to continue start counting again after max value (255 or 65,535) 
+Input Capture   = get Value of count and use in other register 
