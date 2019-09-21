@@ -1,0 +1,57 @@
+EEPROM is a i Kbyte rom in arduino
+
+Warning!! 
+we can rewriet to EEPROM jus  100,000 times, after that it will be unreliable
+
+#include <EEPROM.h>
+
+//pin definitions
+int ledPin=13;
+int buttonPin=2;
+
+//global variables
+int lastButtonState=1;
+long unsigned int lastPress;
+int debounceTime = 20;
+int counter;
+
+void setup(){
+  //setup pin modes
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+  
+  //initialise Serial port
+  Serial.begin(9600);
+ 
+  //assign couter the value of address 0   (1 byte per address)
+  counter = EEPROM.read(0);  //get value from last time we click
+  
+  //write a 0 value to address 0. This allows for consecutive resets to reset counter
+  EEPROM.write(0,0);         //reset value if we press reset 2 time , continuous 
+}
+
+void loop(){
+  int buttonState = digitalRead(buttonPin); //read the state of buttonPin and store it as buttonState (0 or 1)
+  
+  if( (millis()-lastPress)>debounceTime ) //if the time between the last buttongChange is greater than the debounceTime
+  {
+     lastPress=millis();
+     if(buttonState=0 && lastButtonState ==1) //if button is pressed and was released last change
+     {
+       counter++
+       EEPROM.write(0,counter); //write counter to address 0   , if we reset, the value is the value we leftoff
+       digitalWrite(ledPin,HIGH); //momentary LED
+       lastButtonState=0;  //record the lastButtonState
+       //print the results
+       Serial.print("Counter:");
+       Serial.print(counter);
+     }
+  }
+  if(buttonState ==1 && lastButtonState==0) //if button is not pressed, and was press last change
+  {
+    lastButtonState=1;  //record the lastButtonState
+    digitalWrite(ledPin,LOW);   //momentary LED
+  }
+}
+
+
