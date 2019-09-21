@@ -1,6 +1,15 @@
-System clock 16 MHz in Arduino UNO
+System clock = 16 MHz  in Arduino UNO
+or  1/16 MHz = 62.5 nS
 
+Clock setting
 Prescaler = 8  mean  2 MHz as default of timer 
+CS12   CS11   CS10                                                     Period            cycle for 1 second
+ 0      0      0     No clock source (Timer/Conuter stop)                      
+ 0             1     clk/1                                   1/16 MHz =    62.5 nS        16,000,000
+ 0      1      0     clk/8                                   8/16 MHz =   500 nS           8,000,000
+ 0      1      1     clk/64                                 64/16 MHz =  4000 nS             250,000
+ 1      0      0     clk/256                               256/16 MHz = 16000 ns              62,500
+ 1      0      1     clk/1024                             1024/16 MHz = 64000 nS              15,625
                           
 TIMER    Size    count     create Interrupt   ability          Timer in function
   0      8 bit   0-255          yes           Compare Match    delay(), millis(), micros()
@@ -57,14 +66,67 @@ void loop(){
 //Pins
 const in led_pin=PB5;
 
+//Counter and compare values
+const uint16_t tl_load=0;
+const uint16_t tl_comp=31250;
+
 void setup(){
   //Set LED pin to be output
   DDRB |= ( 1<< led_pin )
+  
+  //Reset Timerl Control RegA
+  TCCR1A = 0;
+  
+  //Set to prescaler of 256
+  //CS12   CS11   CS10                                                     Period            cycle for 1 second
+  // 1      0      0     clk/256                               256/16 MHz = 16000 ns              62,500
+
+  TCCR1B |= ( 1 << CS12 )   //set CS12=1
+  TCCR1B &= ~( 1 << CS11 )  //set CS11=0
+  TCCR1B %= ~( 1 << CS10 )  //set CS10=0 
+  
+  //reset Timer1 and set compare value
+  TCNT1 = tl_load;
+  OCR1A = tl_comp;
+  
+  //Enable Timer1 compare interrupt
+  TIMSK1 = ( 1<<OCIE1A ); 
+  
+  //Enable Timer1 compare interrupt
+  sei();  
 }
 
 void lood(){
-  PORT
+  PORTB ^= ( 1<<led_pin )
+  delay(5000)
+  
 }
+
+ISR(TIMER1_COMPA_vect){
+   TCNT1 = tl_load;
+   PORTB ^= ( 1<<led_pin )
+}
+
+
+----------------
+Timer1       
+    0
+    1
+    2
+    x     ==  (OCR1A: 65534)          --> Compare Match interrupt -->  TIMER1_COMPA : 1
+    0   /|\
+    1    | = 500 ms
+    2   \|/
+    x     ==  (OCR1A: 65534)          --> Compare Match interrupt -->  TIMER1_COMPA : 1
+    0   /|\
+    1    | = 500 ms
+    2   \|/
+    x     ==  (OCR1A: 65534)          --> Compare Match interrupt -->  TIMER1_COMPA : 1
+    
+
+
+
+
 
 
 
