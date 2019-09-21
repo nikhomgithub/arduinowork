@@ -47,9 +47,9 @@ toggle pin
 0010 0010  0000 0010    <-  PORTD
 0010 0000  0010 0000    <-  ( 1<<5 ) we want to toggle bit 5
 --------   --------     XOR
-0000 0010  0010 0010    < - PORT 
-
-
+0000 0010  0010 0010    <-  PORTD ^= ( 1<<led_pin )
+                            or
+                            PORTD = ( 1<<led_pin ) ^ PORTD 
 
 XOR (dif = 1)
 a b out
