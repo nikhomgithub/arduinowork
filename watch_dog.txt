@@ -8,6 +8,10 @@ User for
 
 WDTCSR = Watchdog Timer Control Register 
 
+     7     6     5     4    3     2     1    0
+   WDIF  WDIE  WDP3  WDCE  WDE  WDP2  WDP1 WDP0
+                       1    1             
+
 WDTON  WDE  WDIE   Mode               Action on Time-out
   1     0    0     Stopped            None
   1     0    1     Interrupt Mode     Interrupt     
@@ -18,4 +22,87 @@ WDTON  WDE  WDIE   Mode               Action on Time-out
   
 
 * WDTON  arduino IDE set for us every time
+
+
+====================================
+#include <avr/wdt.h> //for Watch dog
+#include <EEPROM.h>  //for EEPROM
+
+//led pin
+int led=13;
+
+volatile int wSetting = 1; //variable to store WDT setting ,use in ISR
+
+void setup(){
+ wdt_disable();  //datasheet recommend disable WDT right away in case of low probability event
+ pinMode(led, OUTPUT); //set up the LED pin to output
+ pinMode(2,INPUT_PULLUP); // setup pin 2 for reset button
+ getSettings(); //start serial setting menu to choose WDT setting 
+ 
+ //set up watch dog Timer, function from avr library 
+ if(wSetting == 1) setWDT(0b01000000);  //set for interrupt
+ else if(wSetting ==2) setWDT(0b00001000); //set for reset 
+ else setWDT(0b01001000); ///set for interrupt and then reset
+}
+
+void loop(){  
+  if(!digitalRead(2)){         //check if reset button is pressed
+    digitalWrite(led,low);     //turn of led
+    wdt_reset();               //reset WDT 
+  }
+}
+
+
+//This function get the WDT setting from the user using Serial comm
+void getSettings(){
+  Serial.begin(57600);
+  Serial.println("We just started up...");
+  byte b; //variable to store interrupt / reset tracker  
+  
+  if(EEPROM.get(10,b)){  //check if interrupt occured before reset
+      Serial.println("...and an interrupt occured....");
+      b = 0; //reset variable
+      EEPROM.put(10,b);
+  }
+  
+  Serial.println("Select the WDT setting: 1 --> interrupt, 2 --> reset, 3 --> interrupt & reset"
+  
+  //wait for user to input 
+  while(!Serial.available()){}
+  
+  wSetting = Serial.parseInt();//get entry and ensure it is valid
+  if(wSetting<1 || wSetting >3{
+    wSetting=1;
+  }
+  
+  Serial.print("WDT setting is ");
+  Serial.print(wSetting);
+  Serial.println();
+  Serial.end(); //not to mix serial comm with interrupts together
+ 
+}
+
+
+//This function setup and start the watchdog timer
+void setWDT(byte sWDT){
+  WDTCSR |= 0b0001 1000     //initial set up
+  WDTCSR = sWDT | WDTO_2S   //set WDT based user setting and for 2 second interval , with macro
+  wdt_reset();              //mean start watchdog count from 0 again  
+}
+
+//This is the interrupt service routine for WDT. It is called when the WDT times out is in interrupt mode.
+//This ISR must be in your Arduino sketch or else WDT will not work corrctly
+
+ISR(WDT_vect)
+{
+  digitalWrite(led,HIGH);
+  if(wSetting==3){
+     byte b=1;
+     EEPROM.put(10,b);
+  }
+  //wdt_disable();
+} //end of WDT_vect
+
+
+
 
