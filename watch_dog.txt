@@ -1,0 +1,21 @@
+Watch dog is timer , that is outside CPU
+
+User for
+- Do task at a regular interval
+- Wake up from sleep
+- Reset the MCU if it is stuck somewhare in MainLoop 
+
+
+WDTCSR = Watchdog Timer Control Register 
+
+WDTON  WDE  WDIE   Mode               Action on Time-out
+  1     0    0     Stopped            None
+  1     0    1     Interrupt Mode     Interrupt     
+  1     1    0     System Reset Mode  Reset
+  1     1    1     Interrupt and      Interrupt, then go to Reset
+                   System Reset Mode
+  0     x    x     System Reset Mode  Reset
+  
+
+* WDTON  arduino IDE set for us every time
+
