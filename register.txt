@@ -8,29 +8,55 @@ PIND => for input (1= enable digitalRead value)
   ditialWrite(5,HIGH)
   pinMode(2,INPUT_PULLUP)
   
-  DDRD  = B00100000 = 32 (decimal) 
+  DDRD  = B00100000 = 32 (decimal)  or DDRD & = ~( 1<<2 )
   PORTD = B00000100 
   
 Set/Clear individual register
 
-Set bit
-0010 0000  <-  ( 1<<5 )  //what we want start from 0000 0000    or   _BV(5)  reduce size
+Set bit 5 from 0 to 1
+
 0000 0100  <-  PORTD current status
----------
-0010 0100  <-  PORTD = ( 1<<5 ) | PORTD   //or bitwise  or  PORTD = _BV(5) | PORTD
+0010 0000  <-  ( 1<<5 )  //what we want start from 0000 0000    or   _BV(5)  reduce size
+---------      OR
+0010 0100  <-  PORTD = ( 1<<5 ) | PORTD 
+               or  
+               PORTD = _BV(5) | PORTD
+               or
+               PORT |= ( 1<<5 )
 
-Clear bit
-1101 1111  <-  ~( 1<<5 )   or  ~_BV(5)
+Clear bit 5 from 1 to 0
 0010 0100  <-  PORTD current status
----------
-0000 0100  <- PORTD = ~( 1<<5 ) & PORTD   //and bitwise   PORTD = ~_BV(5) & PORTD 
-
-0000 0010  <-  ( 1<<2 )
-xxxx xxxx  <-  whatever it read     
-0000 00x0  <-  x >> 2
+1101 1111  <-  ~( 1<<5 )   or  ~_BV(5)
+---------     AND
+0000 0100  <- PORTD = ~( 1<<5 ) & PORTD 
+              or
+              PORTD = ~_BV(5) & PORTD 
+              or
+              PORTD &= ~( 1<<5 )
+          
+Read value from bit
+xxxx xxxx  <-  PIND whatever it read   
+0000 0010  <-  ( 1<<2 ) we want to know value of bit 2
+---------      AND 
+0000 00x0  <-  int result = (PIND & ( 1<<2 )) >> 2
+                                            x >> 2
                and with mask x , if x=1 (read high)  if x =0 read low   
                x >> 2  value right shift = return  
-               int result = (PIND & ( 1<<2 )) >> 2
+
+toggle pin
+0010 0010  0000 0010    <-  PORTD
+0010 0000  0010 0000    <-  ( 1<<5 ) we want to toggle bit 5
+--------   --------     XOR
+0000 0010  0010 0010    < - PORT 
+
+
+
+XOR (dif = 1)
+a b out
+0 0 0
+0 1 1
+1 0 1
+1 1 0
 ==============================================
 
 Interrupt
