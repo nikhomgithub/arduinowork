@@ -36,3 +36,40 @@ Timer1
     2    --> input pin 0 change value    input capture interrupt  --> TIMER1_CAPT : value of input pin 0   
     3                                                                        ICR1 : 2 (timer1 count value)
     ...
+
+
+====================================================
+//Pins
+const int led_pin=13;
+
+void setup(){
+  pinMode(led_pin, OUTPUT);
+}
+
+void loop(){
+  digitalWrite(led_pin, HIGH)
+  delay(500);
+  digitalWrite(led_pin, LOW)
+  delay(500);
+}
+
+------------------
+//Pins
+const in led_pin=PB5;
+
+void setup(){
+  //Set LED pin to be output
+  DDRB |= ( 1<< led_pin )
+}
+
+void lood(){
+  PORT
+}
+
+
+
+
+
+
+
+
